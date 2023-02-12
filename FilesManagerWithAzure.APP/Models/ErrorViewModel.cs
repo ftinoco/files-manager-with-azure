@@ -1,4 +1,4 @@
-namespace FilesManagerWithAzure.Models
+namespace FilesManagerWithAzure.APP.Models
 {
     public class ErrorViewModel
     {

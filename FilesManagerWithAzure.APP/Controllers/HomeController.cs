@@ -1,8 +1,8 @@
-﻿using FilesManagerWithAzure.Models;
+﻿using FilesManagerWithAzure.APP.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace FilesManagerWithAzure.Controllers
+namespace FilesManagerWithAzure.APP.Controllers
 {
     public class HomeController : Controller
     {

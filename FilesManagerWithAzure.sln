@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilesManagerWithAzure.APP", "FilesManagerWithAzure.APP\FilesManagerWithAzure.APP.csproj", "{F2ECE4E3-3D09-41B8-8501-48528ED5AB2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilesManagerWithAzure.Core", "FilesManagerWithAzure.Core\FilesManagerWithAzure.Core.csproj", "{161AF399-93BD-4311-A2C0-BF0DE6DB24C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F2ECE4E3-3D09-41B8-8501-48528ED5AB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2ECE4E3-3D09-41B8-8501-48528ED5AB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2ECE4E3-3D09-41B8-8501-48528ED5AB2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{161AF399-93BD-4311-A2C0-BF0DE6DB24C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{161AF399-93BD-4311-A2C0-BF0DE6DB24C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{161AF399-93BD-4311-A2C0-BF0DE6DB24C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{161AF399-93BD-4311-A2C0-BF0DE6DB24C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

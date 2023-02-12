@@ -17,7 +17,7 @@ input.addEventListener("change", function () {
     //getting user select file and [0] this means if user select multiple files then we'll select only the first one
     file = this.files[0];
     dropArea.classList.add("active");
-    showFile(); //calling function
+    uploadFile(); //calling function
 });
 
 
@@ -38,42 +38,54 @@ dropArea.addEventListener("dragleave", () => {
 dropArea.addEventListener("drop", (event) => {
     event.preventDefault(); //preventing from default behaviour
     //getting user select file and [0] this means if user select multiple files then we'll select only the first one
-    file = event.dataTransfer.files[0]; 
-    showFile(); //calling function
+    file = event.dataTransfer.files[0];
+    uploadFile(); //calling function
 });
 
-function showFile() {
+function uploadFile() {
     let fileType = file.type; //getting selected file type
     let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; //adding some valid image extensions in array
     if (validExtensions.includes(fileType)) { //if user selected file is an image file
-        let formData;
-        var form = document.querySelector("form");
-        if (input.files.length > 0) {
-            formData = new FormData(form);
-        } else { 
-            formData = new FormData();
-            formData.set('file', file);
-            formData.set('__RequestVerificationToken',
-                document.querySelector('input[name="__RequestVerificationToken"]').value);
-        }
-        submitFile(formData, form.action);
+        var modal = new bootstrap.Modal(document.getElementById('descModal'), {
+            backdrop: 'static',
+            focus: true
+        });
+        document.getElementById('btnUploadFile')
+            .addEventListener('click', function (event) {
+                confirmUpload();
+        });
+        modal.show();
     } else {
         alert("This is not an Image File!");
         dropArea.classList.remove("active");
         dragText.textContent = "Drag & Drop to Upload File";
     }
 }
+function confirmUpload() {
+    let formData = new FormData();
+    var form = document.querySelector("form");
+    var description = document.getElementById('txtDescription').value;
+    if (description.length > 0) {
+        console.log(form['__RequestVerificationToken']);
+        formData.set('File', file);
+        formData.set('__RequestVerificationToken', form['__RequestVerificationToken'].value);
+        formData.set('Description', description);
+        submitFile(formData, form.action);
+    } else {
+        alert("The description must not be empty!");
+    }
+}
 
-async function submitFile(formData, action) {  
-    try { 
+async function submitFile(formData, action) {
+    try {
         const response = await fetch(action, {
             method: 'POST',
             body: formData
         });
 
         if (response.ok) {
-                window.location.href = '/';
-        } 
+            window.location.href = '/';
+        }
     } catch (error) {
         console.error('Error:', error);
     }

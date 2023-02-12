@@ -1,9 +1,9 @@
-﻿namespace FilesManagerWithAzure.Core.DTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace FilesManagerWithAzure.Core.DTOs;
+
+public class FileUploadDTO
 {
-    public class FileUploadDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string ImagePath { get; set; }
-    }
+    public string Description { get; set; }
+    public IFormFile File { get; set; }
 }

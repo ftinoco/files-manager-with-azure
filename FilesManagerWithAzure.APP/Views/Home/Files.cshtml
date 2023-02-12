@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FilesManagerWithAzure.Core.DTOs.FileDTO>
+@{
+
+}
+<h3>Files</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Creation Date</th>
+            <th scope="col">Last Modification Date</th>
+            <th scope="col">Last Access Date</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        { 
+            <tr> 
+                <th>@item.FileName</th>
+                <td>@item.Description</td>
+                <td>@item.CreationDate.ToString("MM/dd/yyy HH:mm")</td>
+                <td>@item.LastModificationDate.ToString("MM/dd/yyy HH:mm")</td>
+                <td>@item.LastAccessDate.ToString("MM/dd/yyy HH:mm")</td>
+                <td><a href="@Url.Action("GetFile", "Home", new { name = item.FileName } )" class="btn btn-link" >Download</a> </td>
+            </tr>
+        }
+    </tbody>
+</table>

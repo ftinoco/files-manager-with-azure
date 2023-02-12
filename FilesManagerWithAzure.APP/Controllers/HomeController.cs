@@ -3,6 +3,7 @@ using FilesManagerWithAzure.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 
 namespace FilesManagerWithAzure.APP.Controllers
 {
@@ -27,39 +28,64 @@ namespace FilesManagerWithAzure.APP.Controllers
             if (dto.File != null && dto.File.Length > 0)
             {
                 string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
-                if (!Directory.Exists(path)) 
-                    Directory.CreateDirectory(path); 
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
                 using (var fileStream = new FileStream(Path.Combine(path, dto.File.FileName), FileMode.Create))
                 {
                     await dto.File.CopyToAsync(fileStream);
-                }
-                 
-                string[] files = System.IO.Directory.GetFiles(path, "*.*");
-
-                foreach (string s in files)
-                {
-                    // Create the FileInfo object only when needed to ensure
-                    // the information is as current as possible.
-                    System.IO.FileInfo fi = null;
-                    try
-                    {
-                        fi = new System.IO.FileInfo(s);
-                    }
-                    catch (System.IO.FileNotFoundException e)
-                    {
-                        // To inform the user and continue is
-                        // sufficient for this demonstration.
-                        // Your application may require different behavior.
-                        Console.WriteLine(e.Message);
-                        continue;
-                    }
-                    Console.WriteLine("{0} : {1}", fi.Name, fi.Directory);
                 }
                 return Ok();
             }
             return BadRequest();
         }
-         
+
+        public IActionResult Files()
+        {
+            List<FileDTO> files = new();
+            string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+            string[] filesName = System.IO.Directory.GetFiles(path, "*.*");
+
+            foreach (string s in filesName)
+            {
+                FileInfo fi;
+                try
+                {
+                    fi = new FileInfo(s);
+                }
+                catch (FileNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                files.Add(new FileDTO
+                {
+                    CreationDate = fi.CreationTime,
+                    Extension = fi.Extension,
+                    FileName = fi.Name,
+                    LastAccessDate = fi.LastAccessTime,
+                    LastModificationDate = fi.LastWriteTime
+                });
+            }
+            return View(files);
+        }
+
+        [HttpGet]
+        public FileResult GetFile(string name)
+        {
+            try
+            {
+                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+                string fullPath = Path.Combine(path, name);
+                var stream = new FileStream(fullPath, FileMode.Open);
+
+                return File(stream, MediaTypeNames.Application.Octet, name);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

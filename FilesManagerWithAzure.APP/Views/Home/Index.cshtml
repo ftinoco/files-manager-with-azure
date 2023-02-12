@@ -4,13 +4,16 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <div class="main-container">
-        <div class="drag-area">
-            <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
-            <header>Drag & Drop to Upload File</header>
-            <span>OR</span>
-            <button>Browse File</button>
-            <input type="file" hidden> 
+    <form action="@Url.Action("UploadFile")" method="post"
+          enctype="multipart/form-data" asp-antiforgery="true">
+        <div class="main-container">
+            <div class="drag-area">
+                <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <header>Drag & Drop to Upload File</header>
+                <span>OR</span>
+                <button type="button">Browse File</button>
+                <input name="file" id="file" type="file" hidden>
+            </div>
         </div>
-    </div>
+    </form>
 </div>

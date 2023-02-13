@@ -18,8 +18,4 @@
     <ProjectReference Include="..\FilesManagerWithAzure.Core\FilesManagerWithAzure.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UploadedFiles\" />
-  </ItemGroup>
-
 </Project>

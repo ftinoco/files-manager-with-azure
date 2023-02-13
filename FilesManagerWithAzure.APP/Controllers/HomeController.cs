@@ -1,11 +1,9 @@
 ﻿using FilesManagerWithAzure.APP.Models;
+using FilesManagerWithAzure.Core.DTOs;
 using FilesManagerWithAzure.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using FilesManagerWithAzure.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.IO;
-using System.Net.Mime;
 
 namespace FilesManagerWithAzure.APP.Controllers
 {
@@ -32,24 +30,20 @@ namespace FilesManagerWithAzure.APP.Controllers
         {
             if (dto.File != null && dto.File.Length > 0)
             {
-                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                using (var fileStream = new FileStream(Path.Combine(path, dto.File.FileName), FileMode.Create))
-                {
-                    await dto.File.CopyToAsync(fileStream);
-                }
+                using var ms = new MemoryStream();
+                await dto.File.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                await _blobService.UploadFileBlob(ms, dto.File.FileName);
+
                 return Ok();
             }
             return BadRequest();
         }
 
-        public IActionResult Files()
+        public async Task<IActionResult> Files()
         {
             List<FileDTO> files = new();
-            string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
-            string[] filesName = System.IO.Directory.GetFiles(path, "*.*");
-
+            var filesName = await _blobService.GetAllBlobs();
             foreach (string s in filesName)
             {
                 FileInfo fi;
@@ -74,31 +68,14 @@ namespace FilesManagerWithAzure.APP.Controllers
             return View(files);
         }
 
+
         [HttpGet]
-        public FileResult GetFile(string name)
+        public async Task<FileResult> GetFile(string fileName)
         {
-            try
-            {
-                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
-                string fullPath = Path.Combine(path, name);
-                var stream = new FileStream(fullPath, FileMode.Open);
-
-                return File(stream, MediaTypeNames.Application.Octet, name);
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
-        
-
-       
+            var result = await _blobService.GetBlobByName(fileName);
+            return File(result.Blob.ToArray(), result.ContentType, fileName);
         }
-        public async Task<IActionResult> GetImage()
-        {
-            var result = await _blobService.GetBlobByName("Screenshot_2023-01-23-06-23-36-352_com.yzbdz.shuma.jpg");
-            return File(result.Blob.ToArray(), result.ContentType);
-        }
+
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -24,7 +24,7 @@
                 <td>@item.CreationDate.ToString("MM/dd/yyy HH:mm")</td>
                 <td>@item.LastModificationDate.ToString("MM/dd/yyy HH:mm")</td>
                 <td>@item.LastAccessDate.ToString("MM/dd/yyy HH:mm")</td>
-                <td><a href="@Url.Action("GetFile", "Home", new { name = item.FileName } )" class="btn btn-link" >Download</a> </td>
+                <td><a href="@Url.Action("GetFile", "Home", new { fileName = item.FileName } )" target="_blank" class="btn btn-link" >Download</a> </td>
             </tr>
         }
     </tbody>

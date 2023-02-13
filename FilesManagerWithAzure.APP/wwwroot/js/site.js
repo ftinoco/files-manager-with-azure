@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-//selecting all required elements
+﻿//selecting all required elements
 const dropArea = document.querySelector(".drag-area"),
     dragText = dropArea.querySelector("header"),
     button = dropArea.querySelector("button"),
@@ -43,24 +39,17 @@ dropArea.addEventListener("drop", (event) => {
 });
 
 function uploadFile() {
-    //let fileType = file.type; //getting selected file type
-    //let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; //adding some valid image extensions in array
-    //if (validExtensions.includes(fileType)) { //if user selected file is an image file
-        var modal = new bootstrap.Modal(document.getElementById('descModal'), {
-            backdrop: 'static',
-            focus: true
+    var modal = new bootstrap.Modal(document.getElementById('descModal'), {
+        backdrop: 'static',
+        focus: true
+    });
+    document.getElementById('btnUploadFile')
+        .addEventListener('click', function (event) {
+            confirmUpload();
         });
-        document.getElementById('btnUploadFile')
-            .addEventListener('click', function (event) {
-                confirmUpload();
-        });
-        modal.show();
-    //} else {
-    //    alert("This is not an Image File!");
-    //    dropArea.classList.remove("active");
-    //    dragText.textContent = "Drag & Drop to Upload File";
-    //}
+    modal.show();
 }
+
 function confirmUpload() {
     let formData = new FormData();
     var form = document.querySelector("form");

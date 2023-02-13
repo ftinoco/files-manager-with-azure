@@ -2,6 +2,6 @@
 
 public class BlobInfoDTO
 {
-    public BinaryData Blob { get; set; }
+    public byte[] Blob { get; set; }
     public string ContentType { get; set; }
 }

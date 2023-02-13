@@ -1,3 +1,5 @@
+using Azure.Storage.Blobs;
+using FilesManagerWithAzure.Core;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -25,6 +27,12 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
+
+builder.Services.AddSingleton(x => new BlobServiceClient(
+    builder.Configuration.GetValue<string>("AzureBloblStorageCS")
+));
+
+builder.Services.AddCoreDependencies();
 
 var app = builder.Build();
 

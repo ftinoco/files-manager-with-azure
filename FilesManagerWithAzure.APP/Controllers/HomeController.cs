@@ -1,7 +1,10 @@
 ﻿using FilesManagerWithAzure.APP.Models;
 using Microsoft.AspNetCore.Authorization;
+using FilesManagerWithAzure.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Mime;
 
 namespace FilesManagerWithAzure.APP.Controllers
 {
@@ -20,9 +23,70 @@ namespace FilesManagerWithAzure.APP.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadFile(FileUploadDTO dto)
         {
-            return View();
+            if (dto.File != null && dto.File.Length > 0)
+            {
+                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                using (var fileStream = new FileStream(Path.Combine(path, dto.File.FileName), FileMode.Create))
+                {
+                    await dto.File.CopyToAsync(fileStream);
+                }
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        public IActionResult Files()
+        {
+            List<FileDTO> files = new();
+            string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+            string[] filesName = System.IO.Directory.GetFiles(path, "*.*");
+
+            foreach (string s in filesName)
+            {
+                FileInfo fi;
+                try
+                {
+                    fi = new FileInfo(s);
+                }
+                catch (FileNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    continue;
+                }
+                files.Add(new FileDTO
+                {
+                    CreationDate = fi.CreationTime,
+                    Extension = fi.Extension,
+                    FileName = fi.Name,
+                    LastAccessDate = fi.LastAccessTime,
+                    LastModificationDate = fi.LastWriteTime
+                });
+            }
+            return View(files);
+        }
+
+        [HttpGet]
+        public FileResult GetFile(string name)
+        {
+            try
+            {
+                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFiles"));
+                string fullPath = Path.Combine(path, name);
+                var stream = new FileStream(fullPath, FileMode.Open);
+
+                return File(stream, MediaTypeNames.Application.Octet, name);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
 
         [AllowAnonymous]

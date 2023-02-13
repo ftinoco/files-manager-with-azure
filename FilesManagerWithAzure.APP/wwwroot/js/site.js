@@ -43,9 +43,9 @@ dropArea.addEventListener("drop", (event) => {
 });
 
 function uploadFile() {
-    let fileType = file.type; //getting selected file type
-    let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; //adding some valid image extensions in array
-    if (validExtensions.includes(fileType)) { //if user selected file is an image file
+    //let fileType = file.type; //getting selected file type
+    //let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; //adding some valid image extensions in array
+    //if (validExtensions.includes(fileType)) { //if user selected file is an image file
         var modal = new bootstrap.Modal(document.getElementById('descModal'), {
             backdrop: 'static',
             focus: true
@@ -55,11 +55,11 @@ function uploadFile() {
                 confirmUpload();
         });
         modal.show();
-    } else {
-        alert("This is not an Image File!");
-        dropArea.classList.remove("active");
-        dragText.textContent = "Drag & Drop to Upload File";
-    }
+    //} else {
+    //    alert("This is not an Image File!");
+    //    dropArea.classList.remove("active");
+    //    dragText.textContent = "Drag & Drop to Upload File";
+    //}
 }
 function confirmUpload() {
     let formData = new FormData();

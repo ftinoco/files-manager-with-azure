@@ -32,7 +32,7 @@ builder.Services.AddSingleton(x => new BlobServiceClient(
     builder.Configuration.GetValue<string>("AzureBloblStorageCS")
 ));
 
-builder.Services.AddCoreDependencies();
+builder.Services.AddCoreDependencies(builder.Configuration);
 
 var app = builder.Build();
 

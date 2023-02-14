@@ -12,11 +12,13 @@ namespace FilesManagerWithAzure.APP.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IBlobService _blobService;
+        private readonly IBlobInfoService _blobInfoService;
 
-        public HomeController(ILogger<HomeController> logger, IBlobService blobService)
+        public HomeController(ILogger<HomeController> logger, IBlobService blobService, IBlobInfoService blobInfoService)
         {
             _logger = logger;
             _blobService = blobService;
+            _blobInfoService = blobInfoService;
         }
 
         public IActionResult Index()
@@ -28,14 +30,32 @@ namespace FilesManagerWithAzure.APP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadFile(FileUploadDTO dto)
         {
+            try
+            {
             if (dto.File != null && dto.File.Length > 0)
             {
                 using var ms = new MemoryStream();
                 await dto.File.CopyToAsync(ms);
                 ms.Seek(0, SeekOrigin.Begin);
-                await _blobService.UploadFileBlob(ms, dto.File.FileName);
+                var response = await _blobService.UploadFileBlob(ms, dto.File.FileName);
+
+                // saving metadata at cosmosdb
+                await _blobInfoService.CreateBlobInfo(new FileDTO
+                {
+                    Description = dto.Description,
+                    Extension = dto.File.ContentType,
+                    FileName = dto.File.FileName,
+                    CreationDate = response.Value.LastModified.DateTime,
+                    LastModificationDate = response.Value.LastModified.DateTime
+                });
 
                 return Ok();
+                }
+
+            }
+            catch (Exception e)
+            { 
+                throw;
             }
             return BadRequest();
         }
@@ -43,26 +63,16 @@ namespace FilesManagerWithAzure.APP.Controllers
         public async Task<IActionResult> Files()
         {
             List<FileDTO> files = new();
-            var filesName = await _blobService.GetAllBlobs();
-            foreach (string s in filesName)
-            {
-                FileInfo fi;
-                try
-                {
-                    fi = new FileInfo(s);
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
+            var result = await _blobInfoService.GetAllBlobInfo();
+            foreach (var file in result)
+            { 
                 files.Add(new FileDTO
                 {
-                    CreationDate = fi.CreationTime,
-                    Extension = fi.Extension,
-                    FileName = fi.Name,
-                    LastAccessDate = fi.LastAccessTime,
-                    LastModificationDate = fi.LastWriteTime
+                    CreationDate = file.CreationDate,
+                    Extension = file.ContentType,
+                    FileName = file.FileName, 
+                    Description = file.Description,
+                    LastModificationDate = file.LastModificationDate
                 });
             }
             return View(files);

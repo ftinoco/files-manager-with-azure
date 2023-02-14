@@ -39,10 +39,10 @@ public class BlobService : IBlobService
         };
     }
 
-    public async Task UploadFileBlob(Stream file, string fileName)
+    public async Task<Response<BlobContentInfo>> UploadFileBlob(Stream file, string fileName)
     {
         var blobClient = _blobContainerClient.GetBlobClient(fileName);
-        await blobClient.UploadAsync(file, new BlobHttpHeaders()
+        return await blobClient.UploadAsync(file, new BlobHttpHeaders()
         {
             ContentType = GetContentType(fileName)
         }) ;

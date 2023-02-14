@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
+
 namespace FilesManagerWithAzure.APP.Controllers
 {
     [Authorize]
@@ -62,19 +63,7 @@ namespace FilesManagerWithAzure.APP.Controllers
 
         public async Task<IActionResult> Files()
         {
-            List<FileDetailDTO> files = new();
-            var result = await _blobInfoService.GetAll();
-            foreach (var file in result)
-            { 
-                files.Add(new FileDetailDTO
-                {
-                    CreationDate = file.CreationDate,
-                    Extension = file.ContentType,
-                    FileName = file.FileName, 
-                    Description = file.Description,
-                    LastModificationDate = file.LastModificationDate
-                });
-            }
+            var files =  _blobInfoService.GetAll(); 
             return View(files);
         }
 

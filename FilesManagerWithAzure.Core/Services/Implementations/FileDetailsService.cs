@@ -30,8 +30,19 @@ public class FileDetailsService: IFileDetailsService
         return  result > 0;
     }
 
-    public async Task<List<FileDetail>> GetAll()
+    public IEnumerable<FileDetailDTO> GetAll()
     {
-        return await _context.BlobInfos.ToListAsync();
+        var result =  _context.BlobInfos.ToListAsync();
+        foreach (var file in result.Result)
+        {
+            yield return new FileDetailDTO
+            {
+                CreationDate = file.CreationDate,
+                Description = file.Description,
+                Extension = file.ContentType,
+                FileName = file.FileName,
+                LastModificationDate = file.LastModificationDate
+            };
+        }
     }
 }

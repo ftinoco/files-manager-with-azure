@@ -31,8 +31,6 @@ namespace FilesManagerWithAzure.APP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadFile(FileUploadDTO dto)
         {
-            try
-            {
             if (dto.File != null && dto.File.Length > 0)
             {
                 using var ms = new MemoryStream();
@@ -51,19 +49,13 @@ namespace FilesManagerWithAzure.APP.Controllers
                 });
 
                 return Ok();
-                }
-
-            }
-            catch (Exception e)
-            { 
-                throw;
             }
             return BadRequest();
         }
 
         public async Task<IActionResult> Files()
         {
-            var files =  _blobInfoService.GetAll(); 
+            var files = _blobInfoService.GetAll();
             return View(files);
         }
 

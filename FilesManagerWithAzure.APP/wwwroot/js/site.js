@@ -39,43 +39,41 @@ dropArea.addEventListener("drop", (event) => {
 });
 
 function uploadFile() {
-    var modal = new bootstrap.Modal(document.getElementById('descModal'), {
-        backdrop: 'static',
-        focus: true
-    });
-    document.getElementById('btnUploadFile')
-        .addEventListener('click', function (event) {
-            confirmUpload();
-        });
-    modal.show();
-}
-
-function confirmUpload() {
-    let formData = new FormData();
-    var form = document.querySelector("form");
-    var description = document.getElementById('txtDescription').value;
-    if (description.length > 0) {
-        console.log(form['__RequestVerificationToken']);
-        formData.set('File', file);
-        formData.set('__RequestVerificationToken', form['__RequestVerificationToken'].value);
-        formData.set('Description', description);
-        submitFile(formData, form.action);
-    } else {
-        alert("The description must not be empty!");
-    }
-}
-
-async function submitFile(formData, action) {
-    try {
-        const response = await fetch(action, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            window.location.href = '/';
+    Swal.fire({
+        title: 'Add description',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Upload file',
+        showLoaderOnConfirm: true,
+        preConfirm: (description) => {
+            let formData = new FormData();
+            var form = document.querySelector("form");
+            if (description.length > 0) {
+                formData.set('File', file);
+                formData.set('__RequestVerificationToken', form['__RequestVerificationToken'].value);
+                formData.set('Description', description);
+                return fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (!response.ok)
+                        throw new Error(response.statusText);
+                    return { message: 'File successfully processed!'};
+                }).catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}` )
+                })
+            } else 
+                Swal.showValidationMessage('The description must not be empty!');
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: result.value.message
+            });
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
+    })
+} 

@@ -3,8 +3,8 @@ using FilesManagerWithAzure.Core.Persistence.Entities;
 
 namespace FilesManagerWithAzure.Core.Services.Interfaces;
 
-public interface IBlobInfoService
+public interface IFileDetailsService
 {
-    Task<List<BlobContainer>> GetAllBlobInfo();
-    Task<bool> CreateBlobInfo(FileDTO info);
+    Task<List<FileDetail>> GetAll();
+    Task<bool> CreateFileDetail(FileDetailDTO info);
 }

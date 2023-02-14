@@ -17,8 +17,8 @@ public static class DependencyInjection
             configuration.GetSection("AzureCosmosDbSettings:AccountKey").Value,
             configuration.GetSection("AzureCosmosDbSettings:DatabaseName").Value
             ));
-        services.AddScoped<IBlobService, BlobService>();
-        services.AddScoped<IBlobInfoService, BlobInfoService>();
+        services.AddScoped<IBlobManageService, BlobManageService>();
+        services.AddScoped<IFileDetailsService, FileDetailsService>();
         return services;
     }
 }

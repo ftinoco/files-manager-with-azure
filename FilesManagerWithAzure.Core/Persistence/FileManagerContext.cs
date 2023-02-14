@@ -5,7 +5,7 @@ namespace FilesManagerWithAzure.Core.Persistence;
 
 public class FileManagerContext: DbContext
 {
-    public DbSet<BlobContainer> BlobInfos { get; set; }
+    public DbSet<FileDetail> BlobInfos { get; set; }
 
     public FileManagerContext()
     {
@@ -21,8 +21,8 @@ public class FileManagerContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BlobContainer>()
-            .ToContainer("BlobContainer")
+        modelBuilder.Entity<FileDetail>()
+            .ToContainer("FileDetails")
             .HasPartitionKey(x => x.Id);
     }
 }

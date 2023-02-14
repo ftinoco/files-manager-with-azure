@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace FilesManagerWithAzure.Core.Services.Implementations;
 
-public class BlobService : IBlobService
+public class BlobManageService : IBlobManageService
 {
     private readonly BlobServiceClient _blobServiceClient;
     private readonly BlobContainerClient _blobContainerClient;
 
-    public BlobService(BlobServiceClient blobServiceClient)
+    public BlobManageService(BlobServiceClient blobServiceClient)
     {
         _blobServiceClient = blobServiceClient;
         _blobContainerClient = _blobServiceClient.GetBlobContainerClient("filemanagercontainer");
@@ -28,11 +28,11 @@ public class BlobService : IBlobService
         return items;
     }
 
-    public async Task<BlobInfoDTO> GetBlobByName(string blobName)
+    public async Task<FileDTO> GetBlobByName(string blobName)
     {
         var blobClient = _blobContainerClient.GetBlobClient(blobName);
         Response<BlobDownloadResult> blobInfo = await blobClient.DownloadContentAsync();
-        return new BlobInfoDTO()
+        return new FileDTO()
         {
             Blob = blobInfo.Value.Content.ToArray(),
             ContentType = blobInfo.Value.Details.ContentType

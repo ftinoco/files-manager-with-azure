@@ -11,10 +11,10 @@ namespace FilesManagerWithAzure.APP.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IBlobService _blobService;
-        private readonly IBlobInfoService _blobInfoService;
+        private readonly IBlobManageService _blobService;
+        private readonly IFileDetailsService _blobInfoService;
 
-        public HomeController(ILogger<HomeController> logger, IBlobService blobService, IBlobInfoService blobInfoService)
+        public HomeController(ILogger<HomeController> logger, IBlobManageService blobService, IFileDetailsService blobInfoService)
         {
             _logger = logger;
             _blobService = blobService;
@@ -40,7 +40,7 @@ namespace FilesManagerWithAzure.APP.Controllers
                 var response = await _blobService.UploadFileBlob(ms, dto.File.FileName);
 
                 // saving metadata at cosmosdb
-                await _blobInfoService.CreateBlobInfo(new FileDTO
+                await _blobInfoService.CreateFileDetail(new FileDetailDTO
                 {
                     Description = dto.Description,
                     Extension = dto.File.ContentType,
@@ -62,11 +62,11 @@ namespace FilesManagerWithAzure.APP.Controllers
 
         public async Task<IActionResult> Files()
         {
-            List<FileDTO> files = new();
-            var result = await _blobInfoService.GetAllBlobInfo();
+            List<FileDetailDTO> files = new();
+            var result = await _blobInfoService.GetAll();
             foreach (var file in result)
             { 
-                files.Add(new FileDTO
+                files.Add(new FileDetailDTO
                 {
                     CreationDate = file.CreationDate,
                     Extension = file.ContentType,
